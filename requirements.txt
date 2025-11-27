@@ -1,11 +1,23 @@
+# Core scientific stack
 pandas>=2.2.2
 numpy>=1.26.4
 scikit-learn>=1.4.2
 xgboost>=2.0.3
 shap>=0.45.0
 matplotlib>=3.8.4
-joblib>=1.3.2
-mlflow
-azureml-mlflow
 seaborn>=0.13.0
+joblib>=1.3.2
 
+# MLflow ecosystem (versions MUST be pinned for AzureML compatibility)
+mlflow==3.6.0
+mlflow-skinny==2.22.2
+mlflow-tracing==3.6.0
+
+# AzureML integration layer (must match OG)
+azureml-mlflow==1.60.0.post1
+
+# Azure SDK dependencies (recommended for workspace authentication)
+azure-ai-ml>=1.30.0
+azure-identity>=1.25.1
+azure-storage-blob>=12.19.0
+azure-mgmt-core>=1.6.0
