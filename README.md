@@ -22,6 +22,9 @@ python scripts/join_nyc_datasets.py   --ll33 data/raw/ll33_2022_from_pdf.csv   -
 # Set MLFlow Target server
 python scripts/mlflow_set_tracking.py
 
+#login to AZ
+az login 
+
 # Train (choose rf or xgb)
 python scripts/train_nyc_models.py   --csv data/processed/nyc_energy_joined.csv   --outdir artifacts   --model xgb
 
@@ -38,7 +41,7 @@ Artifacts:
 - `artifacts/shap/topk_shap_long_full.csv`
 
 ## Azure Integration (high-level)
-- **Azure ML**: submit jobs for join → train → explain; register model; batch score nightly. (To Activate Azure ML the following commands should be run: **az login**); from there you should be able to see the experiment runs on Azure. 
+- **Azure ML**: submit jobs for join → train → explain; register model; batch score nightly. 
 - **Azure Web App**: package a FastAPI scoring service using saved `.joblib`.
 - **Data Lake + BI**: land `ranking_full.csv` in ADLS and build Power BI dashboards.
 
