@@ -19,14 +19,15 @@ pip install -r requirements.txt
 # Build the dataset
 python scripts/join_nyc_datasets.py   --ll33 data/raw/ll33_2022_from_pdf.csv   --pluto data/raw/nyc_pluto_25v3_csv.zip   --water data/raw/Water_Consumption_in_the_City_of_New_York.csv   --ll84 data/raw/ll84_benchmarking.csv   --ll33-year 2022   --out data/processed/nyc_energy_joined.csv
 
+# Set MLFlow Target server
+python scripts/mlflow_set_tracking.py
+
 # Train (choose rf or xgb)
 python scripts/train_nyc_models.py   --csv data/processed/nyc_energy_joined.csv   --outdir artifacts   --model xgb
 
 # Explain & rank
 python scripts/explain_priority_shap.py   --csv data/processed/nyc_energy_joined.csv   --artifacts artifacts   --outdir artifacts/shap   --prefer full   --topk 2000
 
-# Set MLFlow Target server
-python scripts/mlflow_set_tracking.py
 ```
 
 Artifacts:
@@ -37,7 +38,7 @@ Artifacts:
 - `artifacts/shap/topk_shap_long_full.csv`
 
 ## Azure Integration (high-level)
-- **Azure ML**: submit jobs for join → train → explain; register model; batch score nightly. (To Activate Azure ML the following commands should be run: **az login**)
+- **Azure ML**: submit jobs for join → train → explain; register model; batch score nightly. (To Activate Azure ML the following commands should be run: **az login**); from there you should be able to see the experiment runs on Azure. 
 - **Azure Web App**: package a FastAPI scoring service using saved `.joblib`.
 - **Data Lake + BI**: land `ranking_full.csv` in ADLS and build Power BI dashboards.
 
