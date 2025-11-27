@@ -1,4 +1,5 @@
 # Carbon Cruncher – NYC Building Retrofit Prioritization
+# Jeremy Edit 
 
 **Goal:** Triage which buildings most need retrofit investment and *why*,
 using LL33 grades (https://www.nyc.gov/site/buildings/codes/ll33-energy-grading.page) , LL84 benchmarking (https://data.cityofnewyork.us/Environment/NYC-Building-Energy-and-Water-Data-Disclosure-for-/5zyy-y8am/about_data), PLUTO, and water data.
