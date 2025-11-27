@@ -7,6 +7,7 @@ using LL33 grades (https://www.nyc.gov/site/buildings/codes/ll33-energy-grading.
 1. `scripts/join_nyc_datasets.py` – Build a clean training table.
 2. `scripts/train_nyc_models.py` – Train models (RF or XGBoost).
 3. `scripts/explain_priority_shap.py` – Score priority & generate SHAP explanations.
+4. `scripts/mlflow_set_tracking.py` – Set the target to the Azure ML studio space. 
 
 ## Quickstart
 
@@ -23,6 +24,9 @@ python scripts/train_nyc_models.py   --csv data/processed/nyc_energy_joined.csv 
 
 # Explain & rank
 python scripts/explain_priority_shap.py   --csv data/processed/nyc_energy_joined.csv   --artifacts artifacts   --outdir artifacts/shap   --prefer full   --topk 2000
+
+# Set MLFlow Target server
+python scripts/mlflow_set_tracking.py
 ```
 
 Artifacts:
@@ -33,7 +37,7 @@ Artifacts:
 - `artifacts/shap/topk_shap_long_full.csv`
 
 ## Azure Integration (high-level)
-- **Azure ML**: submit jobs for join → train → explain; register model; batch score nightly.
+- **Azure ML**: submit jobs for join → train → explain; register model; batch score nightly. (To Activate Azure ML the following commands should be run: **az login**)
 - **Azure Web App**: package a FastAPI scoring service using saved `.joblib`.
 - **Data Lake + BI**: land `ranking_full.csv` in ADLS and build Power BI dashboards.
 
