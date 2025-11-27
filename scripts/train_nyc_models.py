@@ -16,10 +16,24 @@ from sklearn.linear_model import Ridge, LogisticRegression
 from sklearn.exceptions import ConvergenceWarning
 import joblib
 
+import mlflow
+import mlflow.sklearn
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+import mlflow
+
+mlflow.set_tracking_uri(
+    "azureml://eastus.api.azureml.ms/mlflow/v1.0/subscriptions/8702bce1-ac17-444a-b392-3cc0530b1276/resourceGroups/carbonCruncherRG/providers/Microsoft.MachineLearningServices/workspaces/carbonCruncherWS"
+)
+
+mlflow.set_experiment("carbon-cruncher-experiment")
+
+
 try:
     from xgboost import XGBRegressor, XGBClassifier
     XGB_AVAILABLE = True
-except Exception:
+except ImportError:
     XGB_AVAILABLE = False
 
 NUMERIC_CANDIDATES = [
@@ -264,6 +278,41 @@ def main():
     if clf_pipe is not None:
         joblib.dump(clf_pipe, outdir / f"grade_classifier_full_{args.model}.joblib")
     print(json.dumps(meta, indent=2))
+  # ----------------------------
+    # MLflow Logging Starts Here
+    # ----------------------------
+
+    def filter_numeric(d):
+        return {
+            k: float(v)
+            for k, v in d.items()
+            if isinstance(v, (int, float, np.floating))
+        }
+
+    with mlflow.start_run(run_name=f"energy_star_regression_{args.model}"):
+        mlflow.log_param("model_family", args.model)
+        mlflow.log_metrics(filter_numeric(reg_metrics))
+        mlflow.log_metrics(filter_numeric(cv_reg))
+        if reg_pipe is not None:
+            mlflow.sklearn.log_model(reg_pipe, artifact_path="regression_model")
+        mlflow.log_artifact(outdir / "metadata.json")
+
+    with mlflow.start_run(run_name=f"grade_classification_{args.model}"):
+        mlflow.log_param("model_family", args.model)
+        mlflow.log_metrics(filter_numeric(clf_metrics))
+        mlflow.log_metrics(filter_numeric(cv_clf))
+        if clf_pipe is not None:
+            mlflow.sklearn.log_model(clf_pipe, artifact_path="classification_model")
+
+        # Confusion matrix
+        if clf_metrics.get("per_class"):
+            cm = pd.DataFrame(clf_metrics["per_class"])
+            plt.figure(figsize=(8, 6))
+            sns.heatmap(cm, annot=True)
+            cm_path = outdir / "confusion_matrix.png"
+            plt.savefig(cm_path)
+            mlflow.log_artifact(cm_path)
+
 
 if __name__ == "__main__":
     main()
